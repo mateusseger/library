@@ -28,7 +28,8 @@ public class Book {
 			}
 		}
 		str += "\nEditora: " + this.publishingComp +
-			   "\nAno de publicação: " + this.yearOfPublic;
+			   "\nAno de publicação: " + this.yearOfPublic + 
+			   "\n";
 		return str;
 	}
 	

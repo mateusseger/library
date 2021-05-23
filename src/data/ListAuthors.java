@@ -7,25 +7,21 @@ public class ListAuthors {
 	private Author first;
 	// lista encadeada simples
 	
-	// adiciona no fim (realiza validação para ver se o autor já não existe na lista, caso existir o mesmo não é adicionado)
-	public String addAtTheEnd(Author author) {
-		try {
-			if(this.search(author)) {
-				throw new ExistingAuthorException(author.getName(), author.getOriginCountry());
+	// adiciona autor no fim da lista
+	public String addAtTheEnd(Author author) throws ExistingAuthorException {
+		if(this.search(author)) {
+			throw new ExistingAuthorException(author.getName(), author.getOriginCountry());
+		} else {
+			if(this.first == null) {
+				this.first = author;
 			} else {
-				if(this.first == null) {
-					this.first = author;
-				} else {
-					Author aux = this.first;
-					while(aux.getNext() != null) {
-						aux = aux.getNext();
-					}
-					aux.setNext(author);
+				Author aux = this.first;
+				while(aux.getNext() != null) {
+					aux = aux.getNext();
 				}
-				return "AUTOR CADASTRADO NO FIM DA LISTA!\n";	
+				aux.setNext(author);
 			}
-		} catch(ExistingAuthorException ea) {
-			return "OCORREU UM ERRO!\n" + ea.toString();
+			return "AUTOR CADASTRADO NO FIM DA LISTA!\n";	
 		}
 	}
 	

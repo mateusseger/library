@@ -10,7 +10,8 @@ public class ExistingBookException extends Exception {
 	
 	@Override
 	public String toString() {
-		return "O livro com código ISBN " + this.isbn + " informado, já existe na lista de livros cadastrados.\n" +
-				"Favor cadastrar um livro novo!\n";
+		return "OCORREU UM ERRO!\n" + 
+				"O livro com código ISBN " + this.isbn + " informado, já existe na lista de livros cadastrados.\n" +
+				"Favor informar um livro diferente!\n";
 	}
 }

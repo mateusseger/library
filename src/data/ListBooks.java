@@ -10,45 +10,37 @@ public class ListBooks {
 	// lista encadeada dupla
 	
 	// adiciona livro no inicio da lista
-	public String addAtTheBeginning(Book book) {
-		try {
-			if(this.search(book)) {
-				throw new ExistingBookException(book.getIsbn());				
+	public String addAtTheBeginning(Book book) throws ExistingBookException {
+		if(this.search(book)) {
+			throw new ExistingBookException(book.getIsbn());				
+		} else {
+			if(this.emptyList()) {
+				this.first = book;
+				this.last = book;
 			} else {
-				if(this.emptyList()) {
-					this.first = book;
-					this.last = book;
-				} else {
-					book.setNext(this.first);
-					this.first.setPrev(book);
-					this.first = book;
-				}
-				return "LIVRO CADASTRADO NO INÍCIO DA LISTA!\n";
+				book.setNext(this.first);
+				this.first.setPrev(book);
+				this.first = book;
 			}
-		} catch(ExistingBookException eb) {
-			return "OCORREU UM ERRO!\n" + eb.toString();
+			return "LIVRO CADASTRADO NO INÍCIO DA LISTA!\n";
 		}
 	}
 	
 	// adiciona livro no fim da lista
-	public String addAtTheEnd(Book book) {
-		try {
-			if(this.search(book)) {
-				throw new ExistingBookException(book.getIsbn());				
+	public String addAtTheEnd(Book book) throws ExistingBookException {
+		if(this.search(book)) {
+			throw new ExistingBookException(book.getIsbn());				
+		} else {
+			if(this.emptyList()) {
+				this.first = book;
+				this.last = book;
 			} else {
-				if(this.emptyList()) {
-					this.first = book;
-					this.last = book;
-				} else {
-					book.setPrev(this.last);
-					this.last.setNext(book);
-					this.last = book;	
-				}
-				return "LIVRO CADASTRADO NO FIM DA LISTA!\n";
+				book.setPrev(this.last);
+				this.last.setNext(book);
+				this.last = book;	
 			}
-		} catch(ExistingBookException eb) {
-			return "OCORREU UM ERRO!\n" + eb.toString();
-		}
+			return "LIVRO CADASTRADO NO FIM DA LISTA!\n";
+		}	
 	}
 	
 	// utilizando o método equals sobrescrito na classe Book, para verificar se o livro já existe
@@ -77,32 +69,28 @@ public class ListBooks {
 	}
 	
 	// remove o livro passado como parâmetro
-	public String removeBook(Book book) {
-		try {
-			if(!this.emptyList()) {
-				for(Book aux = this.first; aux != null; aux = aux.getNext()) {
-					if(aux.equals(book)) {
-						if(this.first == this.last) {
-							this.first = null;
-							this.last = null;
-						} else if(aux == this.first) {
-							this.first = this.first.getNext();
-							this.first.setPrev(null);
-						} else if(aux == this.last) {
-							this.last = this.last.getPrev();
-							this.last.setNext(null);
-						} else {
-							aux.getPrev().setNext(aux.getNext());
-							aux.getNext().setPrev(aux.getPrev());
-						}
-						return "LIVRO REMOVIDO!\n";
+	public String removeBook(Book book) throws BookNotFoundException {
+		if(!this.emptyList()) {
+			for(Book aux = this.first; aux != null; aux = aux.getNext()) {
+				if(aux.equals(book)) {
+					if(this.first == this.last) {
+						this.first = null;
+						this.last = null;
+					} else if(aux == this.first) {
+						this.first = this.first.getNext();
+						this.first.setPrev(null);
+					} else if(aux == this.last) {
+						this.last = this.last.getPrev();
+						this.last.setNext(null);
+					} else {
+						aux.getPrev().setNext(aux.getNext());
+						aux.getNext().setPrev(aux.getPrev());
 					}
+					return "LIVRO REMOVIDO!\n";
 				}
 			}
-			throw new BookNotFoundException(book.getIsbn());	
-		} catch(BookNotFoundException bnf) {
-			return "OCORREU UM ERRO!\n" + bnf.toString();
 		}
+		throw new BookNotFoundException(book.getIsbn());	
 	}
 	
 	// obtem o tamanho da lista
@@ -119,40 +107,30 @@ public class ListBooks {
 		return 0;
 	}
 	
-	// obtem o livro na posicao index (caso não existir, retorna null)
-	public Book getBookByIndex(int index) {
-		try {
-			if(!((getSize()-1) < index || index < 0)) {
-				Book aux = this.first;
-				for(int i = 0; i < index; i++) {
-					aux = aux.getNext();
-				}
-				return aux;
+	// obtem o livro na posicao index
+	public Book getBookByIndex(int index) throws BookNotFoundException {
+		if(!((getSize()-1) < index || index < 0)) {
+			Book aux = this.first;
+			for(int i = 0; i < index; i++) {
+				aux = aux.getNext();
 			}
-			throw new BookNotFoundException(index);
-		} catch(BookNotFoundException bnf) {
-			System.out.println("OCORREU UM ERRO!\n" + bnf.toString());
-			return null;
+			return aux;
 		}
+		throw new BookNotFoundException();
 	}
 	
 	// obtem o livro pelo codigo ISBN
-	public Book getBookByISBN(String isbn) {		
-		try {
-			if(!this.emptyList()) {
-				Book aux = this.first;
-				while(aux != null) {
-					if(aux.getIsbn().equals(isbn)) {
-						return aux;
-					}
-					aux = aux.getNext();
+	public Book getBookByISBN(String isbn) throws BookNotFoundException {		
+		if(!this.emptyList()) {
+			Book aux = this.first;
+			while(aux != null) {
+				if(aux.getIsbn().equals(isbn)) {
+					return aux;
 				}
+				aux = aux.getNext();
 			}
-			throw new BookNotFoundException(isbn);
-		} catch(BookNotFoundException bnf) {
-			System.out.println("OCORREU UM ERRO!\n" + bnf.toString());
-			return null;
 		}
+		throw new BookNotFoundException(isbn);
 	}
 	
 	// ordena a lista em ordem alfabetica utilizando o algoritmo quicksort
@@ -161,7 +139,7 @@ public class ListBooks {
 	}
 	
 	// consulta com filtro pelo autor
-	public String filterByAuthor(String author) {
+	public String filterByAuthor(String author) throws BookNotFoundException {
 		int cont = 0;
 		String str = "LISTA DE LIVROS DO AUTOR " + author + ":\n";
 		if(!this.emptyList()) {
@@ -178,14 +156,14 @@ public class ListBooks {
 			}
 		}
 		if(cont == 0) {
-			return "NENHUM LIVRO ENCONTRADO PARA ESTE AUTOR!\n"; 			
+			throw new BookNotFoundException();
 		} else {
 			return str;
 		}
 	}
 	
 	// consulta com filtro pelo período
-	public String filterByPeriod(int firstPeriod, int finalPeriod) {
+	public String filterByPeriod(int firstPeriod, int finalPeriod) throws BookNotFoundException {
 		int cont = 0;
 		String str = "LISTA DE LIVROS PUBLICADOS ENTRE " + firstPeriod + " E " + finalPeriod + ":\n";
 		if(!this.emptyList()) {
@@ -199,14 +177,14 @@ public class ListBooks {
 			}
 		}
 		if(cont == 0) {
-			return "NENHUM LIVRO ENCONTRADO PARA ESTE PERÍODO!\n";
+			throw new BookNotFoundException();
 		} else {
 			return str;
 		}
 	}
 	
 	// consulta com filtro de palavra/frase
-	public String filterByCont(String contExpression) {
+	public String filterByCont(String contExpression) throws BookNotFoundException {
 		int cont = 0;
 		String str = "LISTA DE LIVROS QUE CONTÉM A PALAVRA/FRASE {" + contExpression + "}:\n";	
 		if(!this.emptyList()) {
@@ -228,7 +206,7 @@ public class ListBooks {
 			}
 		}
 		if(cont == 0) {
-			return "NENHUM LIVRO ENCONTRADO CONTENDO A PALAVRA/FRASE INFORMADA!\n";
+			throw new BookNotFoundException();
 		} else {
 			return str;			
 		}

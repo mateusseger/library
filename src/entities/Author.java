@@ -13,7 +13,8 @@ public class Author {
 	// sobrescrita do método toString()
 	public String toString() {
 		String str = "Nome: " + this.name +
-					 "\nPaís de origem: " + this.originCountry;
+					 "\nPaís de origem: " + this.originCountry +
+					 "\n";
 		return str;
 	}
 	

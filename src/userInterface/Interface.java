@@ -7,6 +7,9 @@ import data.ListAuthors;
 import data.ListBooks;
 import entities.Author;
 import entities.Book;
+import exception.BookNotFoundException;
+import exception.ExistingAuthorException;
+import exception.ExistingBookException;
 
 public class Interface {
 	private String menuVector[] = { "Cadastrar livro", 
@@ -24,7 +27,6 @@ public class Interface {
 	private ListAuthors listAuthors = new ListAuthors();
 	private ListBooks listBooks = new ListBooks();
 
-
 	public void menu() {
 		int option = 0;
 		
@@ -37,17 +39,15 @@ public class Interface {
 					System.out.println((i+1) + ". " + menuVector[i]);
 				}
 				option = this.input.nextInt();
+				this.input.nextLine();
 				switch(option) {
 				case 1:
-					this.input.nextLine();
 					registerBook();
 					break;
 				case 2:
-					this.input.nextLine();
 					registerAuthor();
 					break;
 				case 3:
-					this.input.nextLine();
 					removeBook();
 					break;
 				case 4:
@@ -126,7 +126,11 @@ public class Interface {
 		Book newBook = new Book(title, isbn, authors, publishingComp, yearOfPublic);	
 			
 		// adiciona o livro na lista de livros, caso o mesmo não existir
-		System.out.println(this.listBooks.addAtTheEnd(newBook));
+		try {
+			System.out.println(this.listBooks.addAtTheEnd(newBook));
+		} catch(ExistingBookException eb) {
+			System.out.println(eb.toString());
+		}
 	}
 	
 	private void registerAuthor() {
@@ -137,17 +141,19 @@ public class Interface {
 		Author newAuthor = new Author(name, originCountry);
 		
 		// adiciona o autor na lista de autores, caso o mesmo não existir
-		System.out.println(this.listAuthors.addAtTheEnd(newAuthor));
+		try {
+			System.out.println(this.listAuthors.addAtTheEnd(newAuthor));			
+		} catch(ExistingAuthorException ea) {
+			System.out.println(ea.toString());
+		}
 	}
 	
 	private void removeBook() {
 		System.out.println("Digite o código ISBN do livro: ");
 		String isbn = this.input.nextLine();
 		
-		Book book = this.listBooks.getBookByISBN(isbn);
-		
-		// processo de confirmação para deletar o livro
-		if(book != null) {
+		try {
+			Book book = this.listBooks.getBookByISBN(isbn);		
 			System.out.println(book.toString());
 			System.out.println("Para remover o livro acima digite '1' e para cancelar digite '2': ");
 			int decision = this.input.nextInt();
@@ -155,7 +161,9 @@ public class Interface {
 				System.out.println(this.listBooks.removeBook(book));					
 			} else {
 				System.out.println("REMOÇÃO DE LIVRO CANCELADO!");
-			}
+			}	
+		} catch(BookNotFoundException bnf) {
+			System.out.println(bnf.toString());
 		}
 	}
 	
@@ -165,16 +173,17 @@ public class Interface {
 			for(int i = 0; i < this.consultationOptions.length; i++) {
 				System.out.println((i+1) + ". " + consultationOptions[i]);
 			}
-			option = this.input.nextInt();	
+			option = this.input.nextInt();
+			this.input.nextLine();
 			switch(option) {
 			case 1:
-				this.input.nextLine();
 				System.out.println("Informe o código ISBN do livro que deseja consultar: ");
 				String isbn = this.input.nextLine(); 
-				Book book = this.listBooks.getBookByISBN(isbn);
-				// imprime o livro, caso ele existir
-				if (book != null) {
-					System.out.println(book.toString() + "\n");												
+				try {
+					Book book = this.listBooks.getBookByISBN(isbn);	
+					System.out.println(book.toString());
+				} catch(BookNotFoundException bnf) {
+					System.out.println(bnf.toString());
 				}
 				break;
 			case 2:
@@ -182,23 +191,33 @@ public class Interface {
 				System.out.println(this.listBooks.showList());
 				break;
 			case 3:
-				this.input.nextLine();
 				System.out.println("Informe o nome do autor no qual deseja filtrar os livros: ");
 				String author = this.input.nextLine(); 
-				System.out.println(this.listBooks.filterByAuthor(author));
+				try {
+					System.out.println(this.listBooks.filterByAuthor(author));					
+				} catch(BookNotFoundException bnf) {
+					System.out.println(bnf.toString());
+				}
 				break;
 			case 4:
 				System.out.println("Informe o ano inicial do intervalo de tempo: ");
 				int startPeriod = this.input.nextInt();
 				System.out.println("Informe o ano final do intervalo de tempo: ");
 				int endPeriod = this.input.nextInt();
-				System.out.println(this.listBooks.filterByPeriod(startPeriod, endPeriod));
+				try {
+					System.out.println(this.listBooks.filterByPeriod(startPeriod, endPeriod));					
+				} catch(BookNotFoundException bnf) {
+					System.out.println(bnf.toString());
+				}
 				break;
 			case 5:
-				this.input.nextLine();
 				System.out.println("Informe a palavra/frase contida no título:");
 				String contExpression = this.input.nextLine();
-				System.out.println(this.listBooks.filterByCont(contExpression));
+				try {
+					System.out.println(this.listBooks.filterByCont(contExpression));					
+				} catch(BookNotFoundException bnf) {
+					System.out.println(bnf.toString());
+				}
 				break;
 			case 6:
 				return;

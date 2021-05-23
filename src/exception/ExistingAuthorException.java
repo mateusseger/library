@@ -11,7 +11,8 @@ public class ExistingAuthorException extends Exception {
 	
 	@Override
 	public String toString() {
-		return "Autor(a) " + this.name + " natural do(a) " + this.originCountry + ", já existe na lista de autores cadastrados.\n" +
-				"Favor cadastrar um autor novo!\n";
+		return "OCORREU UM ERRO!\n" + 
+				"Autor(a) " + this.name + " natural do(a) " + this.originCountry + ", já existe na lista de autores cadastrados.\n" +
+				"Favor informar um autor diferente!\n";
 	}
 }
